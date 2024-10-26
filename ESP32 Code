@@ -1,0 +1,50 @@
+/*
+Sarah Teng, Mateo Balbarin, Brandon Wu
+*/
+#include <Stepper.h>
+#include <ESP32Servo.h>
+
+const int stepsPerRevolution = 2048;  // change this to fit the number of steps per revolution
+
+// ULN2003 Motor Driver Pins *DOUBLE CHECK THESE ARE CORRECT*
+#define IN1 19
+#define IN2 18
+#define IN3 5
+#define IN4 17
+// Servo Pin
+static const int servoPin = 13;
+int overallDegrees = 0;
+
+// initialize the servo and stepper library
+Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
+Servo servo1;
+
+void setup() {
+  // set the stepper speed at 10 rpm
+  myStepper.setSpeed(10);
+  // initialize the serial port
+  Serial.begin(115200);
+  servo1.attach(servoPin);
+}
+
+void loop() {
+  // stepper one revolution in one direction:
+  Serial.println("clockwise");
+  myStepper.step(stepsPerRevolution);
+
+
+  if (overallDegrees < 180) {
+    for (int increment = 0; increment < 10; increment++) {
+      overallDegrees++;
+      servo1.write(overallDegrees);
+      Serial.println(overallDegrees);
+      delay(20);
+    }
+  }
+  if (overallDegrees == 180) {
+    overallDegrees = 0;
+    servo1.write(overallDegrees);
+    Serial.println(overallDegrees);
+  }
+
+}
